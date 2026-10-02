@@ -1,17 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 const categories = [
-  "All",
-  "Gaming",
-  "Music",
-  "Sports",
-  "Entertainment",
-  "Roblox",
-  "Technology",
-  "Comedy",
-  "Live",
+  { name: "All", href: "/" },
+  { name: "Gaming", href: "/gaming" },
+  { name: "Music", href: "/music" },
+  { name: "Sports", href: "/sports" },
+  { name: "Entertainment", href: "/trending" },
+  { name: "Roblox", href: "/gaming" },
+  { name: "Technology", href: "/trending" },
+  { name: "Comedy", href: "/trending" },
+  { name: "Live", href: "/live" },
 ];
 
 const videos = [
@@ -99,105 +100,214 @@ const videos = [
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [category, setCategory] = useState("All");
   const [search, setSearch] = useState("");
 
-  const filteredVideos = videos.filter((video) => {
-    const searchMatch =
-      video.title.toLowerCase().includes(search.toLowerCase()) ||
-      video.creator.toLowerCase().includes(search.toLowerCase());
+  function searchVideos(event) {
+    event.preventDefault();
 
-    return searchMatch;
-  });
+    if (!search.trim()) return;
+
+    window.location.href =
+      `/search?q=${encodeURIComponent(search.trim())}`;
+  }
 
   return (
     <main className="app">
+
       {/* HEADER */}
 
       <header className="header">
+
         <div className="header-left">
+
           <button
             className="icon-button"
             onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Menu"
+            aria-label="Open menu"
           >
             ☰
           </button>
 
-          <div className="logo">
+          <Link href="/" className="logo">
             <div className="logo-icon">▶</div>
             <span>VYRO</span>
-          </div>
+          </Link>
+
         </div>
 
-        <div className="search">
+        <form
+          className="search"
+          onSubmit={searchVideos}
+        >
           <input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(event) =>
+              setSearch(event.target.value)
+            }
             placeholder="Search VYRO"
           />
 
-          <button>🔍</button>
-        </div>
+          <button type="submit">
+            🔍
+          </button>
+        </form>
 
         <div className="header-actions">
-          <button className="create-button">＋ Create</button>
 
-          <button className="icon-button">🔔</button>
+          <Link
+            href="/create"
+            className="create-button"
+          >
+            ＋ Create
+          </Link>
 
-          <button className="profile-button">Y</button>
+          <Link
+            href="/notifications"
+            className="icon-button"
+            aria-label="Notifications"
+          >
+            🔔
+          </Link>
+
+          <Link
+            href="/profile"
+            className="profile-button"
+          >
+            Y
+          </Link>
+
         </div>
+
       </header>
 
       {/* SIDEBAR */}
 
-      <aside className={`sidebar ${menuOpen ? "open" : ""}`}>
-        <NavItem icon="🏠" text="Home" active />
-        <NavItem icon="🎬" text="Shorts" />
-        <NavItem icon="📺" text="Subscriptions" />
+      <aside
+        className={`sidebar ${
+          menuOpen ? "open" : ""
+        }`}
+      >
+
+        <NavItem
+          href="/"
+          icon="🏠"
+          text="Home"
+          active
+        />
+
+        <NavItem
+          href="/shorts"
+          icon="🎬"
+          text="Shorts"
+        />
+
+        <NavItem
+          href="/subscriptions"
+          icon="📺"
+          text="Subscriptions"
+        />
 
         <div className="divider" />
 
-        <NavItem icon="🔥" text="Trending" />
-        <NavItem icon="🎮" text="Gaming" />
-        <NavItem icon="🎵" text="Music" />
-        <NavItem icon="🏆" text="Sports" />
-        <NavItem icon="🔴" text="Live" />
+        <NavItem
+          href="/trending"
+          icon="🔥"
+          text="Trending"
+        />
+
+        <NavItem
+          href="/gaming"
+          icon="🎮"
+          text="Gaming"
+        />
+
+        <NavItem
+          href="/music"
+          icon="🎵"
+          text="Music"
+        />
+
+        <NavItem
+          href="/sports"
+          icon="🏆"
+          text="Sports"
+        />
+
+        <NavItem
+          href="/live"
+          icon="🔴"
+          text="Live"
+        />
 
         <div className="divider" />
 
-        <NavItem icon="👤" text="Your channel" />
-        <NavItem icon="🕘" text="History" />
-        <NavItem icon="❤️" text="Liked videos" />
+        <NavItem
+          href="/profile"
+          icon="👤"
+          text="Your channel"
+        />
+
+        <NavItem
+          href="/history"
+          icon="🕘"
+          text="History"
+        />
+
+        <NavItem
+          href="/liked"
+          icon="❤️"
+          text="Liked videos"
+        />
 
         <div className="divider" />
 
-        <NavItem icon="⚙️" text="Settings" />
-        <NavItem icon="❓" text="Help" />
+        <NavItem
+          href="/settings"
+          icon="⚙️"
+          text="Settings"
+        />
+
+        <NavItem
+          href="/help"
+          icon="❓"
+          text="Help"
+        />
+
       </aside>
 
       {/* CONTENT */}
 
       <section className="content">
-        {/* CATEGORY BAR */}
+
+        {/* CATEGORIES */}
 
         <div className="categories">
-          {categories.map((item) => (
-            <button
-              key={item}
-              className={category === item ? "selected" : ""}
-              onClick={() => setCategory(item)}
+
+          {categories.map((category) => (
+            <Link
+              key={category.name}
+              href={category.href}
+              className={
+                category.name === "All"
+                  ? "selected"
+                  : ""
+              }
             >
-              {item}
-            </button>
+              {category.name}
+            </Link>
           ))}
+
         </div>
 
         {/* HERO */}
 
         <div className="hero">
+
           <div className="hero-content">
-            <span className="welcome">✨ WELCOME TO VYRO</span>
+
+            <span className="welcome">
+              ✨ WELCOME TO VYRO
+            </span>
 
             <h1>
               Watch.
@@ -208,123 +318,214 @@ export default function Home() {
             </h1>
 
             <p>
-              Discover amazing videos, follow creators and find
-              something new.
+              Discover amazing videos, follow
+              creators and find something new.
             </p>
 
-            <button className="hero-button">
+            <Link
+              href="/trending"
+              className="hero-button"
+            >
               Explore VYRO →
-            </button>
+            </Link>
+
           </div>
 
           <div className="hero-play">
             <div>▶</div>
           </div>
+
         </div>
 
         {/* VIDEOS */}
 
         <div className="section-header">
-          <div>
-            <h2>
-              {category === "All" ? "Recommended" : category}
-            </h2>
 
+          <div>
+            <h2>Recommended</h2>
             <p>Videos picked for you</p>
           </div>
 
-          <button>See all →</button>
+          <Link href="/trending">
+            See all →
+          </Link>
+
         </div>
 
         <div className="video-grid">
-          {filteredVideos.map((video) => (
+
+          {videos.map((video) => (
             <VideoCard
               key={video.title}
               video={video}
             />
           ))}
+
         </div>
 
         {/* SHORTS */}
 
         <div className="section-header shorts-heading">
+
           <div>
             <h2>🎬 Shorts</h2>
-            <p>Quick videos from VYRO creators</p>
+            <p>
+              Quick videos from VYRO creators
+            </p>
           </div>
 
-          <button>See all →</button>
+          <Link href="/shorts">
+            See all →
+          </Link>
+
         </div>
 
         <div className="shorts-grid">
-          {Array.from({ length: 6 }).map((_, index) => (
-            <div
-              key={index}
-              className="short-card"
-              style={{
-                background:
-                  [
-                    "linear-gradient(160deg,#ff3b30,#ff9500)",
-                    "linear-gradient(160deg,#5856d6,#af52de)",
-                    "linear-gradient(160deg,#007aff,#00c7be)",
-                    "linear-gradient(160deg,#34c759,#007aff)",
-                    "linear-gradient(160deg,#ffcc00,#ff3b30)",
-                    "linear-gradient(160deg,#ff2d55,#af52de)",
-                  ][index],
-              }}
-            >
-              <div className="short-play">▶</div>
 
-              <div className="short-info">
-                <strong>VYRO Short #{index + 1}</strong>
-                <span>{(120 + index * 42)}K views</span>
-              </div>
-            </div>
-          ))}
+          {Array.from({ length: 6 }).map(
+            (_, index) => (
+
+              <Link
+                href={`/shorts/${index + 1}`}
+                key={index}
+                className="short-card"
+                style={{
+                  background:
+                    [
+                      "linear-gradient(160deg,#ff3b30,#ff9500)",
+                      "linear-gradient(160deg,#5856d6,#af52de)",
+                      "linear-gradient(160deg,#007aff,#00c7be)",
+                      "linear-gradient(160deg,#34c759,#007aff)",
+                      "linear-gradient(160deg,#ffcc00,#ff3b30)",
+                      "linear-gradient(160deg,#ff2d55,#af52de)",
+                    ][index],
+                }}
+              >
+
+                <div className="short-play">
+                  ▶
+                </div>
+
+                <div className="short-info">
+
+                  <strong>
+                    VYRO Short #{index + 1}
+                  </strong>
+
+                  <span>
+                    {120 + index * 42}K views
+                  </span>
+
+                </div>
+
+              </Link>
+
+            )
+          )}
+
         </div>
+
       </section>
 
       {/* MOBILE NAV */}
 
       <nav className="mobile-nav">
-        <MobileItem icon="🏠" text="Home" active />
-        <MobileItem icon="🎬" text="Shorts" />
 
-        <button className="mobile-create">＋</button>
+        <MobileItem
+          href="/"
+          icon="🏠"
+          text="Home"
+          active
+        />
 
-        <MobileItem icon="📺" text="Subs" />
-        <MobileItem icon="👤" text="You" />
+        <MobileItem
+          href="/shorts"
+          icon="🎬"
+          text="Shorts"
+        />
+
+        <Link
+          href="/create"
+          className="mobile-create"
+        >
+          ＋
+        </Link>
+
+        <MobileItem
+          href="/subscriptions"
+          icon="📺"
+          text="Subs"
+        />
+
+        <MobileItem
+          href="/profile"
+          icon="👤"
+          text="You"
+        />
+
       </nav>
+
     </main>
   );
 }
 
-function NavItem({ icon, text, active }) {
+function NavItem({
+  href,
+  icon,
+  text,
+  active,
+}) {
   return (
-    <button className={`nav-item ${active ? "active" : ""}`}>
+    <Link
+      href={href}
+      className={`nav-item ${
+        active ? "active" : ""
+      }`}
+    >
       <span>{icon}</span>
       {text}
-    </button>
+    </Link>
   );
 }
 
-function MobileItem({ icon, text, active }) {
+function MobileItem({
+  href,
+  icon,
+  text,
+  active,
+}) {
   return (
-    <button className={`mobile-item ${active ? "active" : ""}`}>
+    <Link
+      href={href}
+      className={`mobile-item ${
+        active ? "active" : ""
+      }`}
+    >
       <span>{icon}</span>
       <small>{text}</small>
-    </button>
+    </Link>
   );
 }
 
 function VideoCard({ video }) {
   return (
-    <article className="video-card">
+    <Link
+      href={`/watch/${encodeURIComponent(
+        video.title
+      )}`}
+      className="video-card"
+    >
+
       <div
         className="thumbnail"
-        style={{ background: video.color }}
+        style={{
+          background: video.color,
+        }}
       >
-        <div className="thumbnail-play">▶</div>
+
+        <div className="thumbnail-play">
+          ▶
+        </div>
 
         <span className="duration">
           {video.duration}
@@ -333,20 +534,28 @@ function VideoCard({ video }) {
         <span className="vyro-label">
           VYRO
         </span>
+
       </div>
 
       <div className="video-info">
+
         <div
           className="avatar"
-          style={{ background: video.color }}
+          style={{
+            background: video.color,
+          }}
         >
           {video.avatar}
         </div>
 
         <div className="video-text">
-          <h3>{video.title}</h3>
+
+          <h3>
+            {video.title}
+          </h3>
 
           <p>
+
             {video.creator}
 
             {video.verified && (
@@ -354,15 +563,21 @@ function VideoCard({ video }) {
                 ✓
               </span>
             )}
+
           </p>
 
           <p>
             {video.views} · {video.time}
           </p>
+
         </div>
 
-        <button className="more">⋮</button>
+        <span className="more">
+          ⋮
+        </span>
+
       </div>
-    </article>
+
+    </Link>
   );
 }
